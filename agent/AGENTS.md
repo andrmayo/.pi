@@ -9,11 +9,9 @@
   then solution. Include why the solution is necessary.
 - When asked a question, answer first before making edits or running commands
 
-## Coding
+## Editing
 
 - Read files in full before making major changes
-- Use top level imports unless there's strong reason for inline import
-- Don't trivialize unit tests in order to make them pass
 
 ## Security and Permissions
 

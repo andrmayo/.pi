@@ -1,7 +1,8 @@
 {
   "packages": [
     "npm:@gotgenes/pi-permission-system",
-    "npm:pi-sandbox"
+    "npm:pi-sandbox",
+    "npm:pi-vim"
   ],
   "lastChangelogVersion": "0.84.1",
   "theme": "dark",
