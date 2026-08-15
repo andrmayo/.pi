@@ -25,7 +25,14 @@ Prefer sketches, pseudocode, and prose over patches.
 This is open-ended study, not writing code.
 - Be prepared both for narrow, self-contained questions and broad research surveys.
 - Compare approaches and cite where ideas come from.
-- When something is unknown or unclear, be explicit about this, rather than seizing on your best guess.`,
+- When something is unknown or unclear, be explicit about this, rather than seizing on your best guess.
+- When working with PDFs:
+  - Use \`pdfinfo\` to inspect a pdf before reading it.
+  - Prefer \`pdftotext -layout\` for text extraction.
+  - For long PDFs, search/extract relevant pages rather than loading the entire document.
+  - If text extraction is empty or clearly corrputed, consider OCR with \`ocrmypdf\`.
+  - If understand a figure, table, equation, or page layout is important,
+  render the relevant page and inspect it as an image when image input is available.`,
   code: `SESSION MODE: CODE.
 Implementation work: write code and fix bugs.
 - Make the smallest change that solves the problem; match existing conventions.
