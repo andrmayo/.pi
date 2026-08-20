@@ -1,4 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { Model, Api } from "@earendil-works/pi-ai";
 
 // Set up different session modes for different use cases
 
@@ -10,6 +11,12 @@ const LABELS: Record<Mode, string> = {
     "Explore - read the codebase, answer questions, weigh design decisions",
   research: "Research - open-ended study and investigation",
   code: "Code - write code and fix bugs",
+};
+
+const DEFAULT_MODELS: Record<Mode, string[]> = {
+  explore: ["anthropic", "claude-opus-4-8"],
+  research: ["google", "gemini-3.6-flash"],
+  code: ["anthropic", "claude-opus-4-8"],
 };
 
 const PROMPTS: Record<Mode, string> = {
@@ -69,9 +76,20 @@ export default function (pi: ExtensionAPI) {
       mode = choice ? (MODES[labels.indexOf(choice)] ?? "code") : "code";
     }
     ctx.ui.setStatus("mode", `mode: ${mode}`);
+    const model: Model<Api> | undefined = ctx.modelRegistry.find(
+      DEFAULT_MODELS[mode][0],
+      DEFAULT_MODELS[mode][1],
+    );
+    if (!model) {
+      throw new Error(
+        `Model not found: ${DEFAULT_MODELS[mode][0]}/${DEFAULT_MODELS[mode][1]}`,
+      );
+    }
+    pi.setModel(model);
   });
 
   // 3) Switch mid-session: e.g. /mode research
+  // does not switch model
   pi.registerCommand("mode", {
     description: "Switch session mode (explore | research | code)",
     getArgumentCompletions: (prefix: string) =>
@@ -93,7 +111,7 @@ export default function (pi: ExtensionAPI) {
 
   // 4) Appy the mode's prompt on every agent run.
   // Appends to Pi's base prompt.
-  // To REPLCE instead, return { systemPrompt: PROMPTS[mode] } with no base.
+  // To REPALCE instead, return { systemPrompt: PROMPTS[mode] } with no base.
   pi.on("before_agent_start", async (event) => {
     if (!mode) return;
     return { systemPrompt: `${event.systemPrompt}\n\n---\n${PROMPTS[mode]}` };
