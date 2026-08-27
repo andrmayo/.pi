@@ -54,6 +54,38 @@ function isMode(v: unknown): v is Mode {
 
 export default function (pi: ExtensionAPI) {
   let mode: Mode | null = null;
+  let disposeWriteGateAuthorizer: (() => void) | undefined;
+
+  // Register with pi-permission-system (if installed) so `write`/`edit`
+  // asks auto-allow only while in code mode; other modes fall through to
+  // the normal ask prompt configured in pi-permission-system's config.
+  pi.events.on("permissions:ready", () => {
+    void (async () => {
+      try {
+        const { getPermissionsService } = await import(
+          "@gotgenes/pi-permission-system"
+        );
+        const permissions = getPermissionsService();
+        disposeWriteGateAuthorizer = permissions?.registerAuthorizer(
+          "usage-mode-write-gate",
+          async (details) => {
+            const surface = details.toolName ?? details.payload.request.surface;
+            if (mode === "code" && (surface === "write" || surface === "edit")) {
+              return { kind: "allow" };
+            }
+            return { kind: "defer" };
+          },
+        );
+      } catch {
+        // permission-system not installed — nothing to register
+      }
+    })();
+  });
+
+  pi.on("session_shutdown", () => {
+    disposeWriteGateAuthorizer?.();
+    disposeWriteGateAuthorizer = undefined;
+  });
 
   // 1) CLI flag: pi --mode code
   pi.registerFlag("mode", {

@@ -6,7 +6,7 @@
   ],
   "lastChangelogVersion": "0.84.1",
   "theme": "dark",
-  "defaultProvider": "google",
-  "defaultModel": "gemini-3.6-flash",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-8",
   "defaultThinkingLevel": "medium"
 }
