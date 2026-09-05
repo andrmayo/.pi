@@ -59,8 +59,17 @@
       "which *": "allow",
       "whoami": "allow",
 
+      "sed *": "allow",
+      "sed -i*": "ask",
+      "sed * -i*": "ask",
+      "sed *--in-place*": "ask",
+      "sed *-?i*": "ask",
+      "sed *-??i*": "ask",
+
       "rm -rf *": "deny",
-      "sudo *": "ask"
+      "sudo *": "ask",
+
+      "*>*": "ask"
     },
     "external_directory": "ask"
   }
